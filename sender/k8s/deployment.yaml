@@ -1,0 +1,61 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  labels:
+    app.kubernetes.io/instance: k8s-demo-go-sender
+    app.kubernetes.io/name: k8s-demo-go-sender
+  name: k8s-demo-go-sender
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/instance: k8s-demo-go-sender
+      app.kubernetes.io/name: k8s-demo-go-sender
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 100%
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/instance: k8s-demo-go-sender
+        app.kubernetes.io/name: k8s-demo-go-sender
+    spec:
+      containers:
+        - env:
+            - name: text
+              value: DevOpsBH
+          image: us.gcr.io/k8s-demo-245816/go-sender:1.0
+          imagePullPolicy: Always
+          name: k8s-demo-go-sender
+          ports:
+          - containerPort: 8080
+            protocol: TCP
+          resources:
+            limits:
+              cpu: 100m
+              memory: 500Mi
+            requests:
+              cpu: 50m
+              memory: 250Mi
+          volumeMounts:
+          - mountPath: /go/src/app/properties/k8s-example.properties
+            subPath: k8s-example.properties
+            name: k8s-demo-go-sender-config
+          - mountPath: /go/src/app/storage/
+            name: k8s-demo-go-sender-volume
+      restartPolicy: Always
+      securityContext: {}
+      terminationGracePeriodSeconds: 30
+      volumes:
+      - configMap:
+          defaultMode: 493 # em decimal, equivalente a 0755 octal no Linux
+          name: k8s-demo-go-sender-configmap
+        name: k8s-demo-go-sender-config
+      - name: k8s-demo-go-sender-volume
+        emptyDir: {}
+#        persistentVolumeClaim:
+#          claimName: k8s-demo-go-sender-claim
+

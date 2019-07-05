@@ -1,0 +1,42 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  labels:
+    app.kubernetes.io/instance: k8s-demo-go-printer
+    app.kubernetes.io/name: k8s-demo-go-printer
+  name: k8s-demo-go-printer
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/instance: k8s-demo-go-printer
+      app.kubernetes.io/name: k8s-demo-go-printer
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 100%
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/instance: k8s-demo-go-printer
+        app.kubernetes.io/name: k8s-demo-go-printer
+    spec:
+      containers:
+        - image: us.gcr.io/k8s-demo-245816/go-printer:1.0
+          imagePullPolicy: Always
+          name: k8s-demo-go-printer
+          ports:
+          - containerPort: 8080
+            protocol: TCP
+          resources:
+            limits:
+              cpu: 100m
+              memory: 500Mi
+            requests:
+              cpu: 50m
+              memory: 250Mi
+      restartPolicy: Always
+      securityContext: {}
+      terminationGracePeriodSeconds: 30

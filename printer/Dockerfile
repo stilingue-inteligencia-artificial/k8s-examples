@@ -10,4 +10,5 @@ COPY *.go .
 RUN go get -d -v ./...
 RUN go install -v ./...
 
-CMD ["/app"]
+EXPOSE 8080
+CMD ["app"]

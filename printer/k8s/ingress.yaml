@@ -1,0 +1,8 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: k8s-demo-go-printer
+spec:
+  backend:
+    serviceName: k8s-demo-go-printer
+    servicePort: 8080
