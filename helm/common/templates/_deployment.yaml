@@ -1,0 +1,50 @@
+{{- define "common.deployment" -}}
+{{- $common := dict "Values" .Values.common -}}
+{{- $noCommon := omit .Values "common" -}}
+{{- $overrides := dict "Values" $noCommon -}}
+{{- $noValues := omit . "Values" -}}
+{{- with merge $noValues $overrides $common -}}
+apiVersion: apps/v1beta2
+kind: Deployment
+metadata:
+  {{- include "common.metadata" . | nindent 2 }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: {{ include "common.fullname" . }}
+      app.kubernetes.io/instance: {{ include "common.fullname" . }}
+  strategy:
+    rollingUpdate:
+      maxSurge: {{ default 1 .Values.maxSurge }}
+      maxUnavailable: {{ default "100%" .Values.maxUnavailable }}
+    type: {{ default "RollingUpdate" .Values.strategyType }}
+  template:
+    metadata:
+      {{- if .Values.configmap.enabled }}
+      annotations:
+        checksum/configmap: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
+      {{- end }}
+      labels:
+        app.kubernetes.io/name: {{ include "common.fullname" . }}
+        app.kubernetes.io/instance: {{ include "common.fullname" . }}
+    spec:
+      containers:
+      - name: {{ include "common.fullname" . }}
+        image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+        imagePullPolicy: {{ default "Always" .Values.image.imagePullPolicy }}
+        {{- if .Values.service.enabled }}
+        ports:
+          {{- range $index, $config := .Values.service.ports }}
+          {{- range $port, $protocol := $config }}
+          - containerPort: {{ $port }}
+            protocol: {{ $protocol | upper }}
+          {{- end }}
+          {{- end }}
+        {{- end }}
+        {{- include "common.handler.resources" . | nindent 8 }}
+        {{- include "common.handler.volumeMounts" . | nindent 8 }}
+        {{- include "common.handler.environmentVariables" . | nindent 8 }}
+      {{- include "common.handler.volume" . | nindent 6 }}
+{{- end -}}
+{{- end -}}

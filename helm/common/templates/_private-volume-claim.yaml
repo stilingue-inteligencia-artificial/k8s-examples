@@ -1,0 +1,24 @@
+{{- define "common.privateVolumeClaim" -}}
+{{- $common := dict "Values" .Values.common -}}
+{{- $noCommon := omit .Values "common" -}}
+{{- $overrides := dict "Values" $noCommon -}}
+{{- $noValues := omit . "Values" -}}
+{{- with merge $noValues $overrides $common -}}
+{{- if .Values.storage.enabled -}}
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  {{- include "common.metadata" . | nindent 2 }}
+spec:
+  {{- if .Values.storage.policy }}
+  persistentVolumeReclaimPolicy: {{ .Values.storage.policy }}
+  {{- end }}
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: {{ required "A valid storage.size is required!" .Values.storage.size }}
+  storageClassName: {{ required "A valid storage.storageClassName is required" .Values.storage.storageClassName }}
+{{- end -}}
+{{- end -}}
+{{- end -}}

@@ -1,0 +1,4 @@
+apiVersion: v1
+description: A Helm chart with common resources to apply DRY principle
+name: common
+version: 1.0.0

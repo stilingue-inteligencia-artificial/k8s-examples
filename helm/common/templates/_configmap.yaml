@@ -1,0 +1,23 @@
+{{- define "common.configmap" -}}
+{{- $common := dict "Values" .Values.common -}}
+{{- $noCommon := omit .Values "common" -}}
+{{- $overrides := dict "Values" $noCommon -}}
+{{- $noValues := omit . "Values" -}}
+{{- with merge $noValues $overrides $common -}}
+{{- if .Values.configmap.enabled -}}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  {{- include "common.metadata" . | nindent 2 }}
+data:
+  {{- if .Values.configmap.files }}
+  {{- range $file, $valuesMap := .Values.configmap.files }}
+  {{ $file}}: |-
+    {{- range $key, $val := $valuesMap }}
+    {{ $key }}={{ $val}}
+    {{- end }}
+  {{- end }}
+  {{- end }}
+{{- end -}}
+{{- end -}}
+{{- end -}}

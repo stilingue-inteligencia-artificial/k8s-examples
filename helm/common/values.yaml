@@ -1,0 +1,8 @@
+configmap:
+  enabled: false
+
+storage:
+  enabled: false
+
+service:
+  enabled: false
