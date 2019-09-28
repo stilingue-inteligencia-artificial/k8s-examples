@@ -1,0 +1,30 @@
+replicaCount: 1
+
+image:
+  repository: us.gcr.io/k8s-demo-254300/go-sender
+  tag: "1.0"
+  pullPolicy: Always
+
+resources:
+  limits:
+    cpu: 100m
+    memory: 500Mi
+  requests:
+    cpu: 50m
+    memory: 250Mi
+
+configmap:
+  enabled: true
+  files:
+    k8s-example.properties:
+      service: k8s-demo-go-printer.default.svc:8080
+  mountPath: /go/src/app/properties/
+
+storage:
+  enabled: true
+  mountPath: /go/src/app/storage/
+  size: 1Gi
+  storageClassName: ssd
+
+env:
+  text: DevOpsBH
