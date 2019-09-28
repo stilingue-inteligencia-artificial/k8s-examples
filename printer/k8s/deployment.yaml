@@ -24,7 +24,7 @@ spec:
         app.kubernetes.io/name: k8s-demo-go-printer
     spec:
       containers:
-        - image: us.gcr.io/k8s-demo-245816/go-printer:1.0
+        - image: us.gcr.io/k8s-demo-254300/go-printer:1.0
           imagePullPolicy: Always
           name: k8s-demo-go-printer
           ports:

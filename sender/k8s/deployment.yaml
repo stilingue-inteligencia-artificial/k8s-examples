@@ -27,7 +27,7 @@ spec:
         - env:
             - name: text
               value: DevOpsBH
-          image: us.gcr.io/k8s-demo-245816/go-sender:1.0
+          image: us.gcr.io/k8s-demo-254300/go-sender:1.0
           imagePullPolicy: Always
           name: k8s-demo-go-sender
           ports:
@@ -55,7 +55,7 @@ spec:
           name: k8s-demo-go-sender-configmap
         name: k8s-demo-go-sender-config
       - name: k8s-demo-go-sender-volume
-        emptyDir: {}
-#        persistentVolumeClaim:
-#          claimName: k8s-demo-go-sender-claim
+#        emptyDir: {}
+        persistentVolumeClaim:
+          claimName: k8s-demo-go-sender-claim
 
