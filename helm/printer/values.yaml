@@ -1,0 +1,21 @@
+replicaCount: 1
+
+image:
+  repository: us.gcr.io/k8s-demo-254300/go-printer
+  tag: "1.0"
+  pullPolicy: Always
+
+service:
+  type: NodePort
+  port: 8080
+
+ingress:
+  enabled: true
+
+resources:
+  limits:
+    cpu: 100m
+    memory: 500Mi
+  requests:
+    cpu: 50m
+    memory: 250Mi

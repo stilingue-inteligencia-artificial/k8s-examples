@@ -1,0 +1,17 @@
+{{- if .Values.ingress.enabled -}}
+{{- $fullName := include "printer.fullname" . -}}
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: {{ $fullName }}
+  labels:
+{{ include "printer.labels" . | indent 4 }}
+  {{- with .Values.ingress.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  backend:
+    serviceName: {{ $fullName }}
+    servicePort: 8080
+{{- end }}
